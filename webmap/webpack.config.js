@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     devServer: {
@@ -64,7 +65,8 @@ module.exports = {
     output: {
         publicPath: '/',
         filename: 'pl3xmap.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
+        clean: true
     },
     performance: {
         maxEntrypointSize: 512000,
@@ -76,6 +78,7 @@ module.exports = {
     plugins: [
         new MiniCssExtractPlugin({
             filename: 'styles.css'
-        })
+        }),
+        new CopyPlugin({ patterns: [{ from: 'public' }] })
     ]
 }
