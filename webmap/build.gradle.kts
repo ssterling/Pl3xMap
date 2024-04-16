@@ -9,13 +9,20 @@ tasks.named("clean") {
     delete("$projectDir/dist")
 }
 
-tasks.named("compileJava") {
-    dependsOn(buildWebmap)
-}
-
 val buildWebmap = tasks.register<NpxTask>("buildWebmap") {
-    command = "webpack"
     dependsOn(tasks.named("npmInstall"))
+    command = "webpack"
+
+    inputs.files(listOf(
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "webpack.config.js",
+    ))
+    inputs.dir("src")
+    inputs.dir("public")
+//    inputs.dir(fileTree("node_modules").exclude(".cache"))
+    outputs.dir("dist")
 }
 
 sourceSets {
@@ -23,8 +30,17 @@ sourceSets {
         java {
             resources {
                 srcDir("$projectDir")
-                include("web/**")
+                include("dist/**")
             }
         }
+    }
+}
+
+tasks.withType<ProcessResources> {
+    dependsOn(buildWebmap)
+
+    doLast {
+        val destinationDir = outputs.files.singleFile.resolve("web")
+        outputs.files.singleFile.resolve("dist").renameTo(destinationDir)
     }
 }

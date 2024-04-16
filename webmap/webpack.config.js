@@ -65,8 +65,7 @@ module.exports = {
     output: {
         publicPath: '/',
         filename: 'pl3xmap.js',
-        path: path.resolve(__dirname, 'dist'),
-        clean: true
+        path: path.resolve(__dirname, 'dist')
     },
     performance: {
         maxEntrypointSize: 512000,
