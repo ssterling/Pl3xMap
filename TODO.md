@@ -1,4 +1,6 @@
 - [ ] move versions to `gradle/libs.versions.toml` 
 - [ ] Share logic in [`buildSrc`](https://docs.gradle.org/current/userguide/sharing_build_logic_between_subprojects.html#sec:using_buildsrc)
-- [ ] fix missing `jars/` directory in `META-INF` of uber-jar
+- uber-jar shenanigans
+  - [ ] fix missing `jars/` directory in `META-INF`
+  - [ ] fix incorrect `MANIFEST.MF`
 - [ ] ignore `mappings.tiny` file
