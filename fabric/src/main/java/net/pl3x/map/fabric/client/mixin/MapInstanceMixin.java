@@ -34,7 +34,7 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.pl3x.map.core.util.Colors;
 import net.pl3x.map.fabric.client.Pl3xMapFabricClient;
 import net.pl3x.map.fabric.client.duck.MapInstance;
-import net.pl3x.map.fabric.main.network.ServerboundMapPayload;
+import net.pl3x.map.fabric.common.network.ServerboundMapPayload;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

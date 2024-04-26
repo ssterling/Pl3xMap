@@ -23,16 +23,9 @@
  */
 package net.pl3x.map.fabric.server;
 
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,12 +36,10 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.pl3x.map.core.configuration.Config;
 import net.pl3x.map.core.network.Constants;
 import net.pl3x.map.core.network.Network;
-import net.pl3x.map.fabric.client.manager.NetworkManager;
-import net.pl3x.map.fabric.main.network.ClientboundMapPayload;
-import net.pl3x.map.fabric.main.network.ClientboundServerPayload;
-import net.pl3x.map.fabric.main.network.ServerboundMapPayload;
-import net.pl3x.map.fabric.main.network.ServerboundServerPayload;
-import org.jetbrains.annotations.NotNull;
+import net.pl3x.map.fabric.common.network.ClientboundMapPayload;
+import net.pl3x.map.fabric.common.network.ClientboundServerPayload;
+import net.pl3x.map.fabric.common.network.ServerboundMapPayload;
+import net.pl3x.map.fabric.common.network.ServerboundServerPayload;
 
 public class FabricNetwork extends Network {
     private final Pl3xMapFabricServer mod;

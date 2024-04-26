@@ -1,6 +1,5 @@
-package net.pl3x.map.fabric.main.network;
+package net.pl3x.map.fabric.common.network;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
