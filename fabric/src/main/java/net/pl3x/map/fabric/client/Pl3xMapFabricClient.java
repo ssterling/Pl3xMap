@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -40,7 +41,6 @@ import net.pl3x.map.core.Pl3xMap;
 import net.pl3x.map.core.network.Constants;
 import net.pl3x.map.core.scheduler.Scheduler;
 import net.pl3x.map.fabric.client.duck.MapInstance;
-import net.pl3x.map.fabric.client.manager.NetworkManager;
 import net.pl3x.map.fabric.client.manager.TileManager;
 import net.pl3x.map.fabric.main.network.ClientboundMapPayload;
 import net.pl3x.map.fabric.main.network.ClientboundServerPayload;
@@ -82,12 +82,12 @@ public class Pl3xMapFabricClient implements ClientModInitializer {
                 "pl3xmap.title"
         ));
 
-        PayloadTypeRegistry.configurationC2S().register(ServerboundServerPayload.TYPE, ServerboundServerPayload.STREAM_CODEC);
-        PayloadTypeRegistry.configurationS2C().register(ClientboundServerPayload.TYPE, ClientboundServerPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(ServerboundServerPayload.TYPE, ServerboundServerPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(ClientboundServerPayload.TYPE, ClientboundServerPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(ServerboundMapPayload.TYPE, ServerboundMapPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ClientboundMapPayload.TYPE, ClientboundMapPayload.STREAM_CODEC);
 
-        ClientConfigurationNetworking.registerGlobalReceiver(ClientboundServerPayload.TYPE, ClientboundServerPayload::handle);
+        ClientPlayNetworking.registerGlobalReceiver(ClientboundServerPayload.TYPE, ClientboundServerPayload::handle);
         ClientPlayNetworking.registerGlobalReceiver(ClientboundMapPayload.TYPE, ClientboundMapPayload::handle);
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
@@ -109,7 +109,7 @@ public class Pl3xMapFabricClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (Minecraft.getInstance().player == null) {
+            if (client.player == null) {
                 return;
             }
             while (this.keyBinding.consumeClick()) {

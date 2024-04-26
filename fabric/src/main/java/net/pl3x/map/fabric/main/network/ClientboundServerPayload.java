@@ -32,7 +32,7 @@ public record ClientboundServerPayload(int protocol, int response, String webAdd
         return TYPE;
     }
 
-    public static void handle(ClientboundServerPayload payload, ClientConfigurationNetworking.Context context) {
+    public static void handle(ClientboundServerPayload payload, ClientPlayNetworking.Context context) {
         Pl3xMapFabricClient instance = Pl3xMapFabricClient.getInstance();
         if (payload.protocol != Constants.PROTOCOL || payload.response != Constants.RESPONSE_SUCCESS) {
             instance.setEnabled(false);
