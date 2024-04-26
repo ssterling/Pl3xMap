@@ -115,7 +115,7 @@ public class FabricNetwork extends Network {
 
         ServerPlayNetworking.send(player, new ClientboundMapPayload(
                 Constants.PROTOCOL, Constants.RESPONSE_SUCCESS, id,
-                map.scale, map.centerX, map.centerZ, level.dimension().location().toString()
+                map.scale, map.centerX, map.centerZ, level.dimension().location().toString().replace(":", "-")
         ));
     }
 }
