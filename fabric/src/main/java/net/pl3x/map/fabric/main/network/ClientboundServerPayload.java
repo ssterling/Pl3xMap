@@ -1,5 +1,6 @@
 package net.pl3x.map.fabric.main.network;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -31,7 +32,7 @@ public record ClientboundServerPayload(int protocol, int response, String webAdd
         return TYPE;
     }
 
-    public static void handle(ClientboundServerPayload payload, ClientPlayNetworking.Context context) {
+    public static void handle(ClientboundServerPayload payload, ClientConfigurationNetworking.Context context) {
         Pl3xMapFabricClient instance = Pl3xMapFabricClient.getInstance();
         if (payload.protocol != Constants.PROTOCOL || payload.response != Constants.RESPONSE_SUCCESS) {
             instance.setEnabled(false);

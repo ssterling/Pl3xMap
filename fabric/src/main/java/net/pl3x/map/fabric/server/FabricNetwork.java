@@ -27,6 +27,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
@@ -58,13 +59,13 @@ public class FabricNetwork extends Network {
 
     @Override
     public void register() {
-        PayloadTypeRegistry.configurationC2S().register(ServerboundMapPayload.TYPE, ServerboundMapPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(ServerboundServerPayload.TYPE, ServerboundServerPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(ClientboundServerPayload.TYPE, ClientboundServerPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(ServerboundMapPayload.TYPE, ServerboundMapPayload.STREAM_CODEC);
+        PayloadTypeRegistry.configurationC2S().register(ServerboundServerPayload.TYPE, ServerboundServerPayload.STREAM_CODEC);
+        PayloadTypeRegistry.configurationS2C().register(ClientboundServerPayload.TYPE, ClientboundServerPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(ServerboundMapPayload.TYPE, ServerboundMapPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(ClientboundMapPayload.TYPE, ClientboundMapPayload.STREAM_CODEC);
 
-        ServerPlayNetworking.registerGlobalReceiver(ServerboundServerPayload.TYPE, (payload, context) -> {
-            ServerPlayNetworking.send(context.player(), new ClientboundServerPayload(Constants.PROTOCOL, Constants.RESPONSE_SUCCESS, Config.WEB_ADDRESS));
+        ServerConfigurationNetworking.registerGlobalReceiver(ServerboundServerPayload.TYPE, (payload, context) -> {
+            ServerConfigurationNetworking.send(context.networkHandler(), new ClientboundServerPayload(Constants.PROTOCOL, Constants.RESPONSE_SUCCESS, Config.WEB_ADDRESS));
         });
 
         ServerPlayNetworking.registerGlobalReceiver(ServerboundMapPayload.TYPE, (payload, context) -> {
