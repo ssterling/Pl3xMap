@@ -7,6 +7,7 @@ group = "${rootProject.group}.fabric"
 version = rootProject.version
 
 repositories {
+    mavenLocal()
     maven { url = 'https://maven.fabricmc.net/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven {

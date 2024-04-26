@@ -12,7 +12,7 @@ project.version = "$minecraftVersion-$buildNum"
 
 dependencies {
     compileOnly project(':core')
-    compileOnly project(':bukkit')
+    //compileOnly project(':bukkit')
     compileOnly project(':fabric')
     //compileOnly project(':forge')
 }
@@ -70,13 +70,17 @@ allprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
+            languageVersion = JavaLanguageVersion.of(21)
         }
     }
 
     repositories {
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
+        maven {
+            url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+            mavenContent { snapshotsOnly() }
+        }
         maven { url = 'https://jitpack.io' }
     }
 
@@ -85,6 +89,7 @@ allprojects {
         implementation "cloud.commandframework:cloud-brigadier:$cloudVersion"
         implementation "cloud.commandframework:cloud-paper:$cloudVersion"
         implementation("cloud.commandframework:cloud-minecraft-extras:$cloudVersion") {
+//        implementation "org.incendo:cloud-paper:2.0.0-beta.2"
             exclude group: 'net.kyori', module: '*'
         }
 
@@ -120,7 +125,7 @@ allprojects {
 
     compileJava {
         options.encoding = 'UTF-8'
-        options.release.set(17)
+        options.release.set(21)
     }
 
     processResources {
