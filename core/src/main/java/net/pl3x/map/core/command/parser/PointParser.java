@@ -1,0 +1,85 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020-2023 William Blake Galbreath
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+package net.pl3x.map.core.command.parser;
+
+import net.pl3x.map.core.Pl3xMap;
+import net.pl3x.map.core.command.Sender;
+import net.pl3x.map.core.command.exception.PointParseException;
+import net.pl3x.map.core.markers.Point;
+import net.pl3x.map.core.player.Player;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.parser.standard.IntegerParser;
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
+import org.incendo.cloud.type.range.Range;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Parser that parses strings into {@link Point}s.
+ *
+ * @param <C> command sender type
+ */
+public class PointParser<C> implements ArgumentParser<@NotNull C, @NotNull Point>, BlockingSuggestionProvider.Strings<C> {
+    public static <C> ParserDescriptor<C, Point> parser() {
+        return ParserDescriptor.of(new PointParser<>(), Point.class);
+    }
+
+    @Override
+    public @NotNull ArgumentParseResult<@NotNull Point> parse(@NotNull CommandContext<@NotNull C> commandContext, @NotNull CommandInput commandInput) {
+        if (commandInput.length() < 2) {
+            return ArgumentParseResult.failure(new PointParseException(commandInput.peekString(), PointParseException.INVALID_FORMAT));
+        }
+        Integer[] coordinates = new Integer[2];
+        for (int i = 0; i < 2; i++) {
+            int input = commandInput.readInteger();
+            coordinates[i] = input;
+        }
+
+        return ArgumentParseResult.success(new Point(coordinates[0], coordinates[1]));
+    }
+
+    @NotNull
+    public static Point resolvePoint(@NotNull CommandContext<@NotNull Sender> context, Sender sender) {
+        Point point = context.getOrDefault("center", null);
+        if (point != null) {
+            return point;
+        }
+        if (sender instanceof Sender.Player) {
+            Player player = Pl3xMap.api().getPlayerRegistry().get(((Sender.Player<?>) sender).getUUID());
+            point = player == null ? Point.ZERO : player.getPosition();
+        } else {
+            point = Point.ZERO;
+        }
+        return point;
+    }
+
+    @Override
+    public @NotNull Iterable<@NotNull String> stringSuggestions(@NotNull CommandContext<@NotNull C> commandContext, @NotNull CommandInput input) {
+        return IntegerParser.getSuggestions(Range.intRange(Integer.MIN_VALUE, Integer.MAX_VALUE), input);
+    }
+
+}

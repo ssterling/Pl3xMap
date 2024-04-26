@@ -23,15 +23,15 @@
  */
 package net.pl3x.map.core.command.commands;
 
-import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.minecraft.extras.MinecraftExtrasMetaKeys;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.pl3x.map.core.command.CommandHandler;
 import net.pl3x.map.core.command.Pl3xMapCommand;
 import net.pl3x.map.core.command.Sender;
-import net.pl3x.map.core.command.argument.PlayerArgument;
+import net.pl3x.map.core.command.parser.PlayerParser;
 import net.pl3x.map.core.configuration.Lang;
 import net.pl3x.map.core.player.Player;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.minecraft.extras.RichDescription;
 import org.jetbrains.annotations.NotNull;
 
 public class HideCommand extends Pl3xMapCommand {
@@ -42,19 +42,19 @@ public class HideCommand extends Pl3xMapCommand {
     @Override
     public void register() {
         getHandler().registerSubcommand(builder -> builder.literal("hide")
-                .meta(MinecraftExtrasMetaKeys.DESCRIPTION, Lang.parse(Lang.COMMAND_HIDE_DESCRIPTION))
+                .commandDescription(RichDescription.of(Lang.parse(Lang.COMMAND_HIDE_DESCRIPTION)))
                 .permission("pl3xmap.command.hide")
                 .handler(this::execute));
         getHandler().registerSubcommand(builder -> builder.literal("hide")
-                .argument(PlayerArgument.optional("player"), description(Lang.COMMAND_ARGUMENT_OPTIONAL_PLAYER_DESCRIPTION))
-                .meta(MinecraftExtrasMetaKeys.DESCRIPTION, Lang.parse(Lang.COMMAND_HIDE_DESCRIPTION))
+                .optional("player", PlayerParser.parser(), description(Lang.COMMAND_ARGUMENT_OPTIONAL_PLAYER_DESCRIPTION))
+                .commandDescription(RichDescription.of(Lang.parse(Lang.COMMAND_HIDE_DESCRIPTION)))
                 .permission("pl3xmap.command.hide.others")
                 .handler(this::execute));
     }
 
     private void execute(@NotNull CommandContext<@NotNull Sender> context) {
-        Sender sender = context.getSender();
-        Player player = PlayerArgument.resolve(context, "player");
+        Sender sender = context.sender();
+        Player player = PlayerParser.resolvePlayer(context);
 
         if (player.isHidden()) {
             sender.sendMessage(Lang.COMMAND_HIDE_ALREADY_HIDDEN,
@@ -67,4 +67,6 @@ public class HideCommand extends Pl3xMapCommand {
         sender.sendMessage(Lang.COMMAND_HIDE_SUCCESS,
                 Placeholder.unparsed("player", player.getName()));
     }
+
+
 }

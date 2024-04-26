@@ -23,14 +23,16 @@
  */
 package net.pl3x.map.fabric.server.command;
 
-import cloud.commandframework.Command;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
-import cloud.commandframework.fabric.FabricServerCommandManager;
 import io.leangen.geantyref.TypeToken;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.pl3x.map.core.command.CommandHandler;
 import net.pl3x.map.core.command.Sender;
-import net.pl3x.map.core.command.argument.parser.WorldParser;
+import net.pl3x.map.core.command.parser.WorldParser;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.brigadier.CloudBrigadierManager;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.fabric.FabricServerCommandManager;
 import org.jetbrains.annotations.NotNull;
 
 public class FabricCommandManager implements CommandHandler {
@@ -38,9 +40,12 @@ public class FabricCommandManager implements CommandHandler {
     private final Command.Builder<@NotNull Sender> root;
 
     public FabricCommandManager() {
-        this.manager = new FabricServerCommandManager<>(CommandExecutionCoordinator.simpleCoordinator(), FabricSender::create, Sender::getSender);
+        this.manager = new FabricServerCommandManager<Sender>(
+                ExecutionCoordinator.simpleCoordinator(),
+                SenderMapper.create(FabricSender::new, sender -> sender.getSender())
+        );
 
-        var brigadier = getManager().brigadierManager();
+        CloudBrigadierManager<@NotNull Sender, ?> brigadier = getManager().brigadierManager();
         brigadier.setNativeNumberSuggestions(false);
         brigadier.registerMapping(new TypeToken<WorldParser<Sender>>() {
         }, builder -> builder.toConstant(DimensionArgument.dimension()).cloudSuggestions());
