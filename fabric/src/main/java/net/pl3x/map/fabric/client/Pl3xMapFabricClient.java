@@ -49,8 +49,12 @@ import net.pl3x.map.fabric.main.network.ServerboundServerPayload;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Pl3xMapFabricClient implements ClientModInitializer {
+    public static final Logger LOGGER = LoggerFactory.getLogger(Pl3xMapFabricClient.class);
+
     private static Pl3xMapFabricClient instance;
 
     private final Scheduler scheduler;
@@ -69,7 +73,7 @@ public class Pl3xMapFabricClient implements ClientModInitializer {
 
     public Pl3xMapFabricClient() {
         instance = this;
-        this.scheduler = new Scheduler();
+        this.scheduler = new ClientScheduler();
         this.tileManager = new TileManager(this);
     }
 
