@@ -117,6 +117,12 @@ public class VersionCommand extends Pl3xMapCommand {
     }
 
     private void showVersion(Sender sender) {
+        sender.sendMessage(Lang.COMMAND_VERSION_SUCCESS,
+                Placeholder.unparsed("version", Pl3xMap.api().getVersion()),
+                Placeholder.unparsed("platform", Pl3xMap.api().getPlatform()),
+                Placeholder.unparsed("commit", Pl3xMap.api().getVersionCommit())
+        );
+
         if (this.version.startsWith("-")) {
             sender.sendMessage(switch (this.version) {
                 case "-1" -> Lang.COMMAND_VERSION_STILL_CHECKING;
@@ -126,12 +132,6 @@ public class VersionCommand extends Pl3xMapCommand {
             });
             return;
         }
-
-        sender.sendMessage(Lang.COMMAND_VERSION_SUCCESS,
-                Placeholder.unparsed("version", Pl3xMap.api().getVersion()),
-                Placeholder.unparsed("platform", Pl3xMap.api().getPlatform()),
-                Placeholder.unparsed("commit", Pl3xMap.api().getVersionCommit())
-        );
 
         int cur_build;
         int new_build;
