@@ -40,7 +40,7 @@ public class BukkitCommandManager implements CommandHandler {
     private final Command.Builder<@NotNull Sender> root;
 
     public BukkitCommandManager(@NotNull Plugin plugin) throws Exception {
-        this.manager = new PaperCommandManager<>(plugin,
+        this.manager = new PaperCommandManager<Sender>(plugin,
                 ExecutionCoordinator.simpleCoordinator(),
                 SenderMapper.create(BukkitSender::create, Sender::getSender));
 
