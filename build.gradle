@@ -12,7 +12,7 @@ project.version = "$minecraftVersion-$buildNum"
 
 dependencies {
     compileOnly project(':core')
-    //compileOnly project(':bukkit')
+    compileOnly project(':bukkit')
     compileOnly project(':fabric')
     //compileOnly project(':forge')
 }
@@ -87,7 +87,7 @@ allprojects {
     dependencies {
         implementation "org.incendo:cloud-core:2.0.0-beta.2"
         implementation "org.incendo:cloud-brigadier:2.0.0-beta.2"
-//        implementation "org.incendo:cloud-paper:2.0.0-beta.2"
+        implementation "org.incendo:cloud-paper:2.0.0-beta.2"
         implementation "org.incendo:cloud-processors-confirmation:1.0.0-beta.1"
         implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.2") {
             exclude group: 'net.kyori', module: '*'

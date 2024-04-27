@@ -43,7 +43,7 @@ public class FabricCommandManager implements CommandHandler {
     public FabricCommandManager() {
         this.manager = new FabricServerCommandManager<Sender>(
                 ExecutionCoordinator.simpleCoordinator(),
-                SenderMapper.create(FabricSender::create, sender -> sender.getSender())
+                SenderMapper.create(FabricSender::create, Sender::getSender)
         );
 
         CloudBrigadierManager<@NotNull Sender, ?> brigadier = getManager().brigadierManager();

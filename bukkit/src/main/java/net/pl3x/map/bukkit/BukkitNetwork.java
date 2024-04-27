@@ -25,14 +25,24 @@ package net.pl3x.map.bukkit;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
+import net.pl3x.map.bukkit.network.ClientboundMapPayload;
+import net.pl3x.map.bukkit.network.ClientboundServerPayload;
+import net.pl3x.map.bukkit.network.ServerboundMapPayload;
+import net.pl3x.map.bukkit.network.ServerboundServerPayload;
+import net.pl3x.map.core.configuration.Config;
 import net.pl3x.map.core.network.Constants;
 import net.pl3x.map.core.network.Network;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_20_R3.map.CraftMapRenderer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.map.CraftMapRenderer;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import org.jetbrains.annotations.NotNull;
 
 public class BukkitNetwork extends Network {
     private final Pl3xMapBukkit plugin;
@@ -42,6 +52,48 @@ public class BukkitNetwork extends Network {
     }
 
     public void register() {
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this.plugin, ClientboundServerPayload.TYPE.id().toString());
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this.plugin, ClientboundMapPayload.TYPE.id().toString());
+        Bukkit.getMessenger().registerIncomingPluginChannel(this.plugin, ServerboundServerPayload.TYPE.id().toString(),
+                (channel, player, bytes) -> {
+                    // sendServerData
+                    // TODO: parse bytes
+
+                    ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+                    sendCustomPayloadPacket(serverPlayer, new ClientboundServerPayload(Constants.PROTOCOL, Constants.RESPONSE_SUCCESS, Config.WEB_ADDRESS));
+                }
+        );
+        Bukkit.getMessenger().registerIncomingPluginChannel(this.plugin, ServerboundMapPayload.TYPE.id().toString(),
+                (channel, player, bytes) -> {
+                    // sendMapData
+                    // TODO: parse bytes
+
+                    // TODO: replace with id from incoming channel
+                    int mapId = 0;
+
+                    ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+
+                    MapView map = Bukkit.getMap(mapId);
+                    if (map == null) {
+                        sendCustomPayloadPacket(serverPlayer, new ClientboundMapPayload(Constants.PROTOCOL, Constants.ERROR_NO_SUCH_MAP, mapId));
+                        return;
+                    }
+
+                    World world = map.getWorld();
+                    if (world == null) {
+                        sendCustomPayloadPacket(serverPlayer, new ClientboundMapPayload(Constants.PROTOCOL, Constants.ERROR_NO_SUCH_WORLD, mapId));
+                        return;
+                    }
+
+                    sendCustomPayloadPacket(serverPlayer, new ClientboundMapPayload(
+                            Constants.PROTOCOL, Constants.RESPONSE_SUCCESS, mapId,
+                            getScale(map), map.getCenterX(), map.getCenterZ(), world.getName()
+                    ));
+                }
+        );
+
+
+
         Bukkit.getMessenger().registerOutgoingPluginChannel(this.plugin, Network.CHANNEL);
         Bukkit.getMessenger().registerIncomingPluginChannel(this.plugin, Network.CHANNEL,
                 (channel, player, bytes) -> {
@@ -59,9 +111,19 @@ public class BukkitNetwork extends Network {
         );
     }
 
+    @NotNull
+    private static void sendCustomPayloadPacket(ServerPlayer player, CustomPacketPayload customPacketPayload) {
+        player.connection.send(new ClientboundCustomPayloadPacket(customPacketPayload));
+    }
+
     public void unregister() {
         Bukkit.getMessenger().unregisterOutgoingPluginChannel(this.plugin, Network.CHANNEL);
         Bukkit.getMessenger().unregisterIncomingPluginChannel(this.plugin, Network.CHANNEL);
+    }
+
+    @Override
+    protected <T> void sendServerData(T player) {
+
     }
 
     protected <T> void sendMapData(T player, int id) {
