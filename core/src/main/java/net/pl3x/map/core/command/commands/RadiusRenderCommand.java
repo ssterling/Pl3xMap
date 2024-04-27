@@ -29,7 +29,6 @@ import net.pl3x.map.core.Pl3xMap;
 import net.pl3x.map.core.command.CommandHandler;
 import net.pl3x.map.core.command.Pl3xMapCommand;
 import net.pl3x.map.core.command.Sender;
-import net.pl3x.map.core.command.parser.PointParser;
 import net.pl3x.map.core.command.parser.WorldParser;
 import net.pl3x.map.core.configuration.Config;
 import net.pl3x.map.core.configuration.Lang;
@@ -51,7 +50,7 @@ public class RadiusRenderCommand extends Pl3xMapCommand {
         getHandler().registerSubcommand(builder -> builder.literal("radiusrender")
                 .required("world", WorldParser.parser(), description(Lang.COMMAND_ARGUMENT_REQUIRED_WORLD_DESCRIPTION))
                 .required("radius", IntegerParser.integerParser(1, 1000000))
-                .optional("center", PointParser.parser(), description(Lang.COMMAND_ARGUMENT_OPTIONAL_CENTER_DESCRIPTION))
+                .optional("center", getHandler().getPlatformParsers().columnPosParser(), description(Lang.COMMAND_ARGUMENT_OPTIONAL_CENTER_DESCRIPTION))
                 .commandDescription(RichDescription.of(Lang.parse(Lang.COMMAND_RADIUSRENDER_DESCRIPTION)))
                 .permission("pl3xmap.command.radiusrender")
                 .handler(this::execute));
@@ -65,7 +64,7 @@ public class RadiusRenderCommand extends Pl3xMapCommand {
         Sender sender = context.sender();
         World world = context.get("world");
         int radius = context.get("radius");
-        Point center = PointParser.resolvePoint(context, sender);
+        Point center = getHandler().getPlatformParsers().resolvePointFromColumnPos("center", context);
 
         int rX = center.x() >> 9;
         int rZ = center.z() >> 9;

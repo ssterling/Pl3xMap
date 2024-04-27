@@ -66,6 +66,6 @@ public class ConfirmCommand extends Pl3xMapCommand {
         getHandler().registerSubcommand(builder -> builder.literal("confirm")
                 .commandDescription(RichDescription.of(Lang.parse(Lang.COMMAND_CONFIRM_DESCRIPTION)))
                 .permission("pl3xmap.command.confirm")
-                .apply(this.confirmationManager));
+                .handler(this.confirmationManager.createExecutionHandler()));
     }
 }

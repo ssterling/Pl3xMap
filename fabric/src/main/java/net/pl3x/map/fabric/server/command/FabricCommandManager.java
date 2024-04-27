@@ -27,6 +27,7 @@ import io.leangen.geantyref.TypeToken;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.pl3x.map.core.command.CommandHandler;
 import net.pl3x.map.core.command.Sender;
+import net.pl3x.map.core.command.parser.PlatformParsers;
 import net.pl3x.map.core.command.parser.WorldParser;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.SenderMapper;
@@ -42,7 +43,7 @@ public class FabricCommandManager implements CommandHandler {
     public FabricCommandManager() {
         this.manager = new FabricServerCommandManager<Sender>(
                 ExecutionCoordinator.simpleCoordinator(),
-                SenderMapper.create(FabricSender::new, sender -> sender.getSender())
+                SenderMapper.create(FabricSender::create, sender -> sender.getSender())
         );
 
         CloudBrigadierManager<@NotNull Sender, ?> brigadier = getManager().brigadierManager();
@@ -60,6 +61,11 @@ public class FabricCommandManager implements CommandHandler {
     @Override
     public @NotNull FabricServerCommandManager<@NotNull Sender> getManager() {
         return this.manager;
+    }
+
+    @Override
+    public @NotNull PlatformParsers getPlatformParsers() {
+        return new FabricParsers();
     }
 
     @Override

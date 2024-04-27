@@ -62,7 +62,7 @@ public class HelpCommand extends Pl3xMapCommand {
     public void register() {
         getHandler().registerSubcommand(builder -> builder.literal("help")
                 .commandDescription(RichDescription.of(Lang.parse(Lang.COMMAND_HELP_DESCRIPTION)))
-                .argument(CommandComponent.<Sender, String>ofType(String.class, "query")
+                .optional(CommandComponent.<Sender, String>ofType(String.class, "query")
                         .parser(StringParser.greedyStringParser())
                         .suggestionProvider(SuggestionProvider.blockingStrings((context, input) -> getHandler().getManager()
                                 .createHelpHandler().queryRootIndex(context.sender())

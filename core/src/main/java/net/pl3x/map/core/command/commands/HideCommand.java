@@ -27,7 +27,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.pl3x.map.core.command.CommandHandler;
 import net.pl3x.map.core.command.Pl3xMapCommand;
 import net.pl3x.map.core.command.Sender;
-import net.pl3x.map.core.command.parser.PlayerParser;
 import net.pl3x.map.core.configuration.Lang;
 import net.pl3x.map.core.player.Player;
 import org.incendo.cloud.context.CommandContext;
@@ -46,7 +45,8 @@ public class HideCommand extends Pl3xMapCommand {
                 .permission("pl3xmap.command.hide")
                 .handler(this::execute));
         getHandler().registerSubcommand(builder -> builder.literal("hide")
-                .optional("player", PlayerParser.parser(), description(Lang.COMMAND_ARGUMENT_OPTIONAL_PLAYER_DESCRIPTION))
+                .optional("player", getHandler().getPlatformParsers().playerSelectorParser(),
+                        description(Lang.COMMAND_ARGUMENT_OPTIONAL_PLAYER_DESCRIPTION))
                 .commandDescription(RichDescription.of(Lang.parse(Lang.COMMAND_HIDE_DESCRIPTION)))
                 .permission("pl3xmap.command.hide.others")
                 .handler(this::execute));
@@ -54,7 +54,12 @@ public class HideCommand extends Pl3xMapCommand {
 
     private void execute(@NotNull CommandContext<@NotNull Sender> context) {
         Sender sender = context.sender();
-        Player player = PlayerParser.resolvePlayer(context);
+        Player player = getHandler().getPlatformParsers().resolvePlayerFromPlayerSelector("player", context);
+
+        if (player == null) {
+            sender.sendMessage(Lang.ERROR_MUST_SPECIFY_PLAYER);
+            return;
+        }
 
         if (player.isHidden()) {
             sender.sendMessage(Lang.COMMAND_HIDE_ALREADY_HIDDEN,

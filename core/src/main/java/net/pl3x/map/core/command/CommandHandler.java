@@ -41,6 +41,7 @@ import net.pl3x.map.core.command.commands.ShowCommand;
 import net.pl3x.map.core.command.commands.StatusCommand;
 import net.pl3x.map.core.command.commands.StitchCommand;
 import net.pl3x.map.core.command.commands.VersionCommand;
+import net.pl3x.map.core.command.parser.PlatformParsers;
 import net.pl3x.map.core.configuration.Config;
 import net.pl3x.map.core.configuration.Lang;
 import org.incendo.cloud.Command;
@@ -61,6 +62,13 @@ public interface CommandHandler {
      * @return command manager
      */
     @NotNull CommandManager<@NotNull Sender> getManager();
+
+    /**
+     * Get the platform parsers.
+     *
+     * @return platform parsers
+     */
+    @NotNull PlatformParsers getPlatformParsers();
 
     /**
      * Get the root command.
