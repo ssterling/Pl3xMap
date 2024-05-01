@@ -41,10 +41,12 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import net.pl3x.map.core.Keyed;
 import net.pl3x.map.core.Pl3xMap;
+import net.pl3x.map.core.configuration.Config;
 import net.pl3x.map.core.configuration.PlayersLayerConfig;
 import net.pl3x.map.core.configuration.SpawnLayerConfig;
 import net.pl3x.map.core.configuration.WorldBorderLayerConfig;
 import net.pl3x.map.core.configuration.WorldConfig;
+import net.pl3x.map.core.httpd.LiveDataHandler;
 import net.pl3x.map.core.image.IconImage;
 import net.pl3x.map.core.log.Logger;
 import net.pl3x.map.core.markers.Point;
@@ -58,6 +60,7 @@ import net.pl3x.map.core.player.Player;
 import net.pl3x.map.core.registry.BiomeRegistry;
 import net.pl3x.map.core.registry.Registry;
 import net.pl3x.map.core.renderer.Renderer;
+import net.pl3x.map.core.renderer.task.UpdateLiveData;
 import net.pl3x.map.core.renderer.task.UpdateMarkerData;
 import net.pl3x.map.core.util.FileUtil;
 import net.pl3x.map.core.util.Mathf;
@@ -79,6 +82,8 @@ public abstract class World extends Keyed {
     private final Point spawn;
     private final Type type;
 
+    private final LiveDataHandler liveDataHandler;
+
     private final BiomeManager biomeManager;
     private final BiomeRegistry biomeRegistry;
     private final Registry<@NotNull Layer> layerRegistry;
@@ -87,6 +92,7 @@ public abstract class World extends Keyed {
     private final RegionModifiedState regionModifiedState;
     //private final RegionFileWatcher regionFileWatcher;
     private final UpdateMarkerData markerTask;
+    private final UpdateLiveData liveDataTask;
     private final Map<@NotNull String, Renderer.@NotNull Builder> renderers = new LinkedHashMap<>();
 
     public World(@NotNull String name, long seed, @NotNull Point spawn, @NotNull Type type, @NotNull Path regionDirectory) {
@@ -95,6 +101,8 @@ public abstract class World extends Keyed {
         this.seed = seed;
         this.spawn = spawn;
         this.type = type;
+
+        this.liveDataHandler = new LiveDataHandler();
 
         String safeNameForDirectories = name.replace(":", "-");
 
@@ -122,6 +130,7 @@ public abstract class World extends Keyed {
         this.regionModifiedState = new RegionModifiedState(this);
         //this.regionFileWatcher = new RegionFileWatcher(this);
         this.markerTask = new UpdateMarkerData(this);
+        this.liveDataTask = new UpdateLiveData(this, Config.LIVE_UPDATE_THREADS);
     }
 
     protected void init() {
@@ -167,7 +176,10 @@ public abstract class World extends Keyed {
         Pl3xMap.api().getRegionProcessor().addRegions(this, listRegions(false));
 
         Logger.debug("Starting marker task");
-        Pl3xMap.api().getScheduler().addTask(1, true, this.markerTask);
+        Pl3xMap.api().getScheduler().addTask(this.markerTask);
+
+        Logger.debug("Starting live data task");
+        Pl3xMap.api().getScheduler().addTask(this.liveDataTask);
 
         // load up custom markers
         Logger.debug("Loading custom markers for " + getName());
@@ -213,6 +225,10 @@ public abstract class World extends Keyed {
         return this.markerTask;
     }
 
+    public @NotNull UpdateLiveData getLiveDataTask() {
+        return this.liveDataTask;
+    }
+
     public @NotNull Map<@NotNull String, Renderer.@NotNull Builder> getRenderers() {
         return Collections.unmodifiableMap(this.renderers);
     }
@@ -249,6 +265,10 @@ public abstract class World extends Keyed {
      */
     public @NotNull Type getType() {
         return this.type;
+    }
+
+    public LiveDataHandler getServerSentEventHandler() {
+        return liveDataHandler;
     }
 
     public @NotNull BiomeManager getBiomeManager() {
