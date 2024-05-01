@@ -44,7 +44,7 @@ def combineJars = tasks.register('combineJars', Jar) {
 
 def copyWebmap = tasks.register('copyWebmap', Copy) {
     dependsOn ':webmap:buildWebmap'
-    duplicatesStrategy = DuplicatesStrategy.INHERIT
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from "$rootDir/webmap/public", "$rootDir/webmap/dist"
     include '**/*'
     exclude 'tiles*/'
