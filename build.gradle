@@ -75,8 +75,10 @@ allprojects {
     }
 
     repositories {
-        mavenLocal()
         mavenCentral()
+        maven {
+            url 'https://repo.granny.dev/snapshots'
+        }
         maven {
             url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
             mavenContent { snapshotsOnly() }
