@@ -1,9 +1,8 @@
 net.pl3x.map.core
 net.pl3x.map.core.command
-net.pl3x.map.core.command.argument
-net.pl3x.map.core.command.argument.parser
 net.pl3x.map.core.command.commands
 net.pl3x.map.core.command.exception
+net.pl3x.map.core.command.parser
 net.pl3x.map.core.configuration
 net.pl3x.map.core.event
 net.pl3x.map.core.event.server
