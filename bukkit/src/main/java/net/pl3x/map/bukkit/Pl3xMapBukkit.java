@@ -32,7 +32,7 @@ import net.pl3x.map.core.player.Player;
 import net.pl3x.map.core.player.PlayerListener;
 import net.pl3x.map.core.player.PlayerRegistry;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -81,7 +81,7 @@ public class Pl3xMapBukkit extends JavaPlugin implements Listener {
         }
 
         getServer().getScheduler().runTaskTimer(this, () ->
-                this.pl3xmap.getScheduler().tick(), 20, 20);
+                this.pl3xmap.getScheduler().tick(), 20, 1);
     }
 
     @Override
