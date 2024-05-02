@@ -118,7 +118,12 @@ public final class Config extends AbstractConfig {
             for security reasons. But you do you, boo boo.""")
     public static boolean HTTPD_FOLLOW_SYMLINKS = false;
 
-    @Key("settings.performance.live-update-threads")
+    @Key("settings.performance.live-update.enabled")
+    @Comment("""
+            Whether or not the real-time marker system should run.""")
+    public static boolean LIVE_UPDATE_ENABLED = true;
+
+    @Key("settings.performance.live-update.threads")
     @Comment("""
             The number of process-threads to use for real-time marker updates on the map.
             Value of -1 will use 50% of the available cpu-threads. (recommended)""")
