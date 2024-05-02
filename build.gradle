@@ -77,20 +77,31 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            url 'https://repo.granny.dev/snapshots'
+            url = 'https://repo.granny.dev/snapshots/'
+        }
+        maven {
+            name = 'sonatype-snapshots'
+            url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+            mavenContent {
+                snapshotsOnly()
+            }
         }
         maven {
             url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
-            mavenContent { snapshotsOnly() }
+            mavenContent {
+                snapshotsOnly()
+            }
         }
-        maven { url = 'https://jitpack.io' }
+        maven {
+            url = 'https://jitpack.io'
+        }
     }
 
     dependencies {
         implementation "org.incendo:cloud-core:$cloudVersion"
         implementation "org.incendo:cloud-brigadier:$cloudVersion"
         implementation "org.incendo:cloud-paper:$cloudVersion"
-        implementation "org.incendo:cloud-processors-confirmation:1.0.0-beta.2"
+        implementation "org.incendo:cloud-processors-confirmation:1.0.0-SNAPSHOT"
         implementation("org.incendo:cloud-minecraft-extras:$cloudVersion") {
             exclude group: 'net.kyori', module: '*'
         }

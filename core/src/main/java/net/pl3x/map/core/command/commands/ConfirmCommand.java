@@ -42,7 +42,7 @@ import org.incendo.cloud.processors.confirmation.ConfirmationManager;
 import org.jetbrains.annotations.NotNull;
 
 public class ConfirmCommand extends Pl3xMapCommand {
-    private final ConfirmationManager<@NotNull Sender> confirmationManager = ConfirmationManager.of(
+    private final ConfirmationManager<@NotNull Sender> confirmationManager = ConfirmationManager.confirmationManager(
             ConfirmationConfiguration.<Sender>builder()
                     .cache(GuavaCache.of(CacheBuilder.newBuilder().build()))
                     .noPendingCommandNotifier(sender -> sender.sendMessage(Lang.COMMAND_CONFIRM_NO_PENDING_MESSAGE))
