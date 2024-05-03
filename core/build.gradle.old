@@ -35,7 +35,7 @@ shadowJar {
             'META-INF/LICENSE.txt'
     )
     [
-            //'cloud.commandframework', // do not relocate
+            //'org.incendo', // do not relocate
             'com.github.benmanes.caffeine.cache',
             'com.github.Carleslc.Simple-YAML',
             'com.google.errorprone.annotations',

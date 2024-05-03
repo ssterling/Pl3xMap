@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version("8.1.1") // TODO: Temp
+    id("io.github.goooler.shadow") version "8.1.7" // TODO: Temp
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
@@ -14,8 +14,20 @@ java {
 }
 
 repositories {
+    maven("https://repo.granny.dev/snapshots/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/") {
+        name = "oss-sonatype-snapshots"
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+        name = "s01-sonatype-snapshots"
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
     mavenCentral()
-    mavenLocal()
     maven("https://jitpack.io")
 }
 
@@ -28,10 +40,11 @@ dependencies {
 
     implementation("io.undertow:undertow-core:${rootProject.properties["undertowVersion"]}")
 
-    implementation("cloud.commandframework:cloud-core:${rootProject.properties["cloudVersion"]}")
-    implementation("cloud.commandframework:cloud-brigadier:${rootProject.properties["cloudVersion"]}")
-//    implementation("cloud.commandframework:cloud-paper:${rootProject.properties["cloudVersion"]}")
-    implementation("cloud.commandframework:cloud-minecraft-extras:${rootProject.properties["cloudVersion"]}") {
+    implementation("org.incendo:cloud-core:${rootProject.properties["cloudVersion"]}")
+    implementation("org.incendo:cloud-brigadier:${rootProject.properties["cloudVersion"]}")
+    implementation("org.incendo:cloud-paper:${rootProject.properties["cloudVersion"]}")
+    implementation("org.incendo:cloud-processors-confirmation:1.0.0-beta.2")
+    implementation("org.incendo:cloud-minecraft-extras:${rootProject.properties["cloudVersion"]}") {
         exclude("net.kyori", "*")
     }
 
@@ -62,7 +75,7 @@ tasks.withType<ShadowJar> {
     )
 
     arrayOf(
-        //"cloud.commandframework", // do not relocate
+        //"org.incendo", // do not relocate
         "com.github.benmanes.caffeine.cache",
         "com.github.Carleslc.Simple-YAML",
         "com.google.errorprone.annotations",

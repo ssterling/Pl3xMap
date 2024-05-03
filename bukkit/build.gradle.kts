@@ -2,8 +2,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("java")
-    id("io.papermc.paperweight.userdev") version("1.5.11") // TODO: Temp
-    id("com.github.johnrengelman.shadow") version("8.1.1") // TODO: Temp
+    id("io.papermc.paperweight.userdev") version("1.7.0") // TODO: Temp
+    id("io.github.goooler.shadow") version "8.1.7" // TODO: Temp
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
@@ -11,8 +11,19 @@ project.version = "${rootProject.properties["minecraftVersion"]}-$buildNum"
 project.group = "net.pl3x.map.bukkit"
 
 repositories {
+    maven("https://oss.sonatype.org/content/repositories/snapshots/") {
+        name = "oss-sonatype-snapshots"
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+        name = "s01-sonatype-snapshots"
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
     mavenCentral()
-    mavenLocal()
     maven("https://jitpack.io")
 }
 
@@ -22,9 +33,9 @@ dependencies {
 //    implementation("net.kyori:adventure-text-serializer-plain:${rootProject.properties["adventureVersion"]}")
     implementation(project(":core"))
 
-    implementation("cloud.commandframework:cloud-core:${rootProject.properties["cloudVersion"]}")
-    implementation("cloud.commandframework:cloud-brigadier:${rootProject.properties["cloudVersion"]}")
-    implementation("cloud.commandframework:cloud-paper:${rootProject.properties["cloudVersion"]}")
+    implementation("org.incendo:cloud-core:${rootProject.properties["cloudVersion"]}")
+    implementation("org.incendo:cloud-brigadier:${rootProject.properties["cloudVersion"]}")
+    implementation("org.incendo:cloud-paper:${rootProject.properties["cloudVersion"]}")
 
     implementation("net.kyori:adventure-platform-bukkit:${rootProject.properties["adventureBukkitVersion"]}") // TODO: temp
 
@@ -47,7 +58,7 @@ tasks.withType<ShadowJar> {
     )
 
     arrayOf(
-        //"cloud.commandframework", // do not relocate
+        //"org.incendo", // do not relocate
         "com.github.benmanes.caffeine.cache",
         "com.github.Carleslc.Simple-YAML",
         "com.google.errorprone.annotations",

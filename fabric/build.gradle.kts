@@ -5,8 +5,8 @@ import net.fabricmc.loom.task.RemapJarTask
 import org.gradle.jvm.tasks.Jar
 
 plugins {
-    id("fabric-loom") version("1.5-SNAPSHOT") // TODO: Temp
-    id("com.github.johnrengelman.shadow") version("8.1.1") // TODO: Temp
+    id("fabric-loom") version("1.6-SNAPSHOT") // TODO: Temp
+    id("io.github.goooler.shadow") version "8.1.7" // TODO: Temp
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
@@ -24,11 +24,20 @@ loom {
 }
 
 repositories {
-    maven("https://maven.fabricmc.net/")
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-        mavenContent { snapshotsOnly() }
+    maven("https://repo.granny.dev/snapshots/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/") {
+        name = "sonatype-snapshots"
+        mavenContent {
+            snapshotsOnly()
+        }
     }
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+        name = "s01-sonatype-snapshots"
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
+    maven("https://maven.fabricmc.net/")
     maven("https://jitpack.io")
 }
 
@@ -41,7 +50,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.properties["fabricLoaderVersion"]}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.properties["fabricApiVersion"]}")
 
-    include(modImplementation("cloud.commandframework:cloud-fabric:${rootProject.properties["cloudVersion"]}")!!)
+    include(modImplementation("org.incendo:cloud-fabric:${rootProject.properties["cloudVersion"]}")!!)
     include(modImplementation("net.kyori:adventure-platform-fabric:${rootProject.properties["adventureFabricVersion"]}")!!)
 }
 
