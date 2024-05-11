@@ -77,9 +77,6 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            url = 'https://repo.granny.dev/snapshots/'
-        }
-        maven {
             name = 'sonatype-snapshots'
             url = 'https://oss.sonatype.org/content/repositories/snapshots/'
             mavenContent {
