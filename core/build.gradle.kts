@@ -14,7 +14,6 @@ java {
 }
 
 repositories {
-    maven("https://repo.granny.dev/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/") {
         name = "oss-sonatype-snapshots"
         mavenContent {

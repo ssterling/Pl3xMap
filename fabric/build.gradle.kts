@@ -24,7 +24,6 @@ loom {
 }
 
 repositories {
-    maven("https://repo.granny.dev/snapshots/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/") {
         name = "sonatype-snapshots"
         mavenContent {
