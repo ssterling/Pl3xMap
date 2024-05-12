@@ -55,20 +55,18 @@ dependencies {
 
 tasks {
     shadowJar {
+        dependsOn(remapJar)
+        from(remapJar)
+
         mergeServiceFiles()
-        exclude(
-            "META-INF/LICENSE",
-            "META-INF/LICENSE.txt"
-        )
 
         dependencies {
             include(project(":core"))
         }
     }
 
-    remapJar {
+    build {
         dependsOn(shadowJar)
-        inputFile = shadowJar.get().archiveFile
     }
 }
 

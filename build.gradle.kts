@@ -9,15 +9,15 @@ val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
 project.version = "${rootProject.properties["minecraftVersion"]}-$buildNum"
 
 dependencies {
-    api(project(":fabric", configuration = "shadow"))
-    api(project(":bukkit", configuration = "shadow"))
+    implementation(project(":fabric", configuration = "shadow"))
+    implementation(project(":bukkit", configuration = "shadow"))
 }
 
 tasks {
     shadowJar {
         subprojects
             .filter { it.name != "webmap" }
-            .forEach { dependsOn(":${it.name}:shadowJar") }
+            .forEach { dependsOn(":${it.name}:build") }
 
         archiveClassifier = ""
 
