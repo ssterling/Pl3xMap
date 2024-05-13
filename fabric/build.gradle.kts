@@ -54,9 +54,14 @@ dependencies {
 }
 
 tasks {
+    remapJar {
+        archiveClassifier = "remapped"
+    }
+
     shadowJar {
         dependsOn(remapJar)
         from(remapJar)
+        archiveClassifier = ""
 
         mergeServiceFiles()
 
