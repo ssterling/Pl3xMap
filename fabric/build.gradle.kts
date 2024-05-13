@@ -68,32 +68,34 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
-}
 
-tasks.withType<ProcessResources> {
-    inputs.properties("name" to rootProject.name)
-    inputs.properties("group" to project.group)
-    inputs.properties("version" to project.version)
-    inputs.properties("authors" to project.properties["authors"])
-    inputs.properties("description" to rootProject.properties["description"])
-    inputs.properties("fabricApiVersion" to rootProject.properties["fabricApiVersion"])
-    inputs.properties("fabricLoaderVersion" to rootProject.properties["fabricLoaderVersion"])
-    inputs.properties("minecraftVersion" to rootProject.properties["minecraftVersion"])
-    inputs.properties("website" to rootProject.properties["website"])
-    inputs.properties("sources" to rootProject.properties["sources"])
-    inputs.properties("issues" to rootProject.properties["issues"])
+    processResources {
+        inputs.properties(mapOf(
+            "name" to rootProject.name,
+            "group" to project.group,
+            "version" to project.version,
+            "authors" to project.properties["authors"],
+            "description" to rootProject.properties["description"],
+            "fabricApiVersion" to rootProject.properties["fabricApiVersion"],
+            "fabricLoaderVersion" to rootProject.properties["fabricLoaderVersion"],
+            "minecraftVersion" to rootProject.properties["minecraftVersion"],
+            "website" to rootProject.properties["website"],
+            "sources" to rootProject.properties["sources"],
+            "issues" to rootProject.properties["issues"]
+        ))
 
-    filesMatching("fabric.mod.json") {
-        expand(inputs.properties)
-    }
+        filesMatching("fabric.mod.json") {
+            expand(inputs.properties)
+        }
 
-    // replace whole array with authors
-    doLast {
-        val fabricJsonFile = outputs.files.singleFile.resolve("fabric.mod.json")
-        @Suppress("UNCHECKED_CAST")
-        val jsonContent = JsonSlurper().parse(fabricJsonFile) as MutableMap<String, Any>
-        jsonContent["authors"] = JsonSlurper().parseText(project.properties["authors"].toString()) as Any
+        // replace whole array with authors
+        doLast {
+            val fabricJsonFile = outputs.files.singleFile.resolve("fabric.mod.json")
+            @Suppress("UNCHECKED_CAST")
+            val jsonContent = JsonSlurper().parse(fabricJsonFile) as MutableMap<String, Any>
+            jsonContent["authors"] = JsonSlurper().parseText(project.properties["authors"].toString()) as Any
 
-        fabricJsonFile.writeText(JsonBuilder(jsonContent).toPrettyString())
+            fabricJsonFile.writeText(JsonBuilder(jsonContent).toPrettyString())
+        }
     }
 }

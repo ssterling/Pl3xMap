@@ -47,48 +47,52 @@ dependencies {
     paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:${rootProject.properties["bukkitVersion"]}")
 }
 
-tasks.withType<ShadowJar> {
-    archiveBaseName = "${rootProject.name}-${project.name}"
-    archiveClassifier = ""
+tasks {
+    shadowJar {
+        archiveBaseName = "${rootProject.name}-${project.name}"
+        archiveClassifier = ""
 
-    mergeServiceFiles()
-    exclude(
-        "META-INF/LICENSE",
-        "META-INF/LICENSE.txt"
-    )
+        mergeServiceFiles()
+        exclude(
+            "META-INF/LICENSE",
+            "META-INF/LICENSE.txt"
+        )
 
-    arrayOf(
-        //"org.incendo", // do not relocate
-        "com.github.benmanes.caffeine.cache",
-        "com.github.Carleslc.Simple-YAML",
-        "com.google.errorprone.annotations",
-        "com.luciad",
-        //"io.leangen.geantyref", // do not relocate!
-        "io.undertow",
-        //"net.kyori", // do not relocate!
-        "net.querz",
-        "org.checkerframework",
-        "org.jboss",
-        "org.simpleyaml",
-        "org.wildfly",
-        "org.xnio",
-        "org.yaml.snakeyaml",
-    ).forEach { it -> relocate(it, "libs.$it") }
-}
+        arrayOf(
+            //"org.incendo", // do not relocate
+            "com.github.benmanes.caffeine.cache",
+            "com.github.Carleslc.Simple-YAML",
+            "com.google.errorprone.annotations",
+            "com.luciad",
+            //"io.leangen.geantyref", // do not relocate!
+            "io.undertow",
+            //"net.kyori", // do not relocate!
+            "net.querz",
+            "org.checkerframework",
+            "org.jboss",
+            "org.simpleyaml",
+            "org.wildfly",
+            "org.xnio",
+            "org.yaml.snakeyaml",
+        ).forEach { it -> relocate(it, "libs.$it") }
+    }
 
-tasks.named("build") {
-    dependsOn(tasks.named("reobfJar"))
-}
+    build {
+        dependsOn(reobfJar)
+    }
 
-tasks.withType<ProcessResources> {
-    inputs.properties("name" to rootProject.name)
-    inputs.properties("group" to project.group)
-    inputs.properties("version" to project.version)
-    inputs.properties("authors" to project.properties["authors"])
-    inputs.properties("description" to project.properties["description"])
-    inputs.properties("website" to project.properties["website"])
+    processResources {
+        inputs.properties(mapOf(
+            "name" to rootProject.name,
+            "group" to project.group,
+            "version" to project.version,
+            "authors" to project.properties["authors"],
+            "description" to project.properties["description"],
+            "website" to project.properties["website"]
+        ))
 
-    filesMatching("plugin.yml") {
-        expand(inputs.properties)
+        filesMatching("plugin.yml") {
+            expand(inputs.properties)
+        }
     }
 }
