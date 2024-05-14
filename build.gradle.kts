@@ -15,9 +15,14 @@ dependencies {
 }
 
 tasks {
+    jar {
+        subprojects {
+            dependsOn("${project.name}:build")
+        }
+    }
+
     shadowJar {
         archiveClassifier = ""
-
         mergeServiceFiles()
     }
 
