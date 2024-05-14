@@ -15,17 +15,9 @@ dependencies {
 
 tasks {
     shadowJar {
-        subprojects
-            .filter { it.name != "webmap" }
-            .forEach { dependsOn(":${it.name}:build") }
-
         archiveClassifier = ""
 
         mergeServiceFiles()
-        exclude(
-            "META-INF/LICENSE",
-            "META-INF/LICENSE.txt"
-        )
     }
 
     build {
