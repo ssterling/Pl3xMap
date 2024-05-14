@@ -28,53 +28,19 @@ repositories {
 }
 
 dependencies {
-//    implementation("net.kyori:adventure-api:${rootProject.properties["adventureVersion"]}")
-//    implementation("net.kyori:adventure-text-minimessage:${rootProject.properties["adventureVersion"]}")
-//    implementation("net.kyori:adventure-text-serializer-plain:${rootProject.properties["adventureVersion"]}")
-    implementation(project(":core"))
+    implementation(project(":core", configuration = "shadow"))
 
-    implementation("org.incendo:cloud-core:${rootProject.properties["cloudVersion"]}")
     implementation("org.incendo:cloud-brigadier:${rootProject.properties["cloudVersion"]}")
     implementation("org.incendo:cloud-paper:${rootProject.properties["cloudVersion"]}")
 
     implementation("net.kyori:adventure-platform-bukkit:${rootProject.properties["adventureBukkitVersion"]}") // TODO: temp
 
-//    implementation("com.github.Querz:NBT:${rootProject.properties["querzNbtVersion"]}")
-//    implementation("com.github.Carleslc.Simple-YAML:Simple-Yaml:${rootProject.properties["simpleYamlVersion"]}") {
-//        exclude("org.yaml", "snakeyaml")
-//    }
-
     paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:${rootProject.properties["bukkitVersion"]}")
 }
 
 tasks {
-    shadowJar {
-        archiveBaseName = "${rootProject.name}-${project.name}"
-        archiveClassifier = ""
-
-        mergeServiceFiles()
-        exclude(
-            "META-INF/LICENSE",
-            "META-INF/LICENSE.txt"
-        )
-
-        arrayOf(
-            //"org.incendo", // do not relocate
-            "com.github.benmanes.caffeine.cache",
-            "com.github.Carleslc.Simple-YAML",
-            "com.google.errorprone.annotations",
-            "com.luciad",
-            //"io.leangen.geantyref", // do not relocate!
-            "io.undertow",
-            //"net.kyori", // do not relocate!
-            "net.querz",
-            "org.checkerframework",
-            "org.jboss",
-            "org.simpleyaml",
-            "org.wildfly",
-            "org.xnio",
-            "org.yaml.snakeyaml",
-        ).forEach { it -> relocate(it, "libs.$it") }
+    reobfJar {
+        dependsOn(shadowJar)
     }
 
     build {
