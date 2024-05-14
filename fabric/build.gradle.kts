@@ -55,14 +55,13 @@ dependencies {
 
 tasks {
     remapJar {
-        archiveClassifier = "remapped"
+        dependsOn(shadowJar)
+        inputFile.set(shadowJar.get().archiveFile)
+
+        archiveClassifier = ""
     }
 
     shadowJar {
-        dependsOn(remapJar)
-        from(remapJar)
-        archiveClassifier = ""
-
         mergeServiceFiles()
 
         dependencies {
@@ -71,7 +70,7 @@ tasks {
     }
 
     build {
-        dependsOn(shadowJar)
+        dependsOn(remapJar)
     }
 
     processResources {
