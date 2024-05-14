@@ -172,9 +172,9 @@ public class Polyline extends Marker<@NotNull Polyline> {
      * @return this line
      */
     public @NotNull Polyline loop() {
-        Preconditions.checkState(this.points.size() > 0, "No points to loop back on");
-        Point first = this.points.get(0);
-        Point last = this.points.get(this.points.size() - 1);
+        Preconditions.checkState(!this.points.isEmpty(), "No points to loop back on");
+        Point first = this.points.getFirst();
+        Point last = this.points.getLast();
         Preconditions.checkState(!first.equals(last), "First and last points are the same");
         this.points.add(first);
         return this;
@@ -269,7 +269,7 @@ public class Polyline extends Marker<@NotNull Polyline> {
     public @NotNull JsonObject toJson() {
         JsonObjectWrapper wrapper = new JsonObjectWrapper();
         wrapper.addProperty("key", getKey());
-        wrapper.addProperty("points", getPoints());
+        wrapper.addProperty("points", new ArrayList<>(getPoints()));
         wrapper.addProperty("pane", getPane());
         return wrapper.getJsonObject();
     }
