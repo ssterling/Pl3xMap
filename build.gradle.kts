@@ -17,7 +17,7 @@ dependencies {
 tasks {
     jar {
         subprojects {
-            dependsOn("${project.name}:build")
+            dependsOn(project.tasks.build)
         }
     }
 
