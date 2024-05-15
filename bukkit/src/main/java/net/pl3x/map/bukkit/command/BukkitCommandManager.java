@@ -32,15 +32,15 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import org.jetbrains.annotations.NotNull;
 
 public class BukkitCommandManager implements CommandHandler {
-    private final PaperCommandManager<@NotNull Sender> manager;
+    private final LegacyPaperCommandManager<@NotNull Sender> manager;
     private final Command.Builder<@NotNull Sender> root;
 
     public BukkitCommandManager(@NotNull Plugin plugin) throws Exception {
-        this.manager = new PaperCommandManager<Sender>(plugin,
+        this.manager = new LegacyPaperCommandManager<Sender>(plugin,
                 ExecutionCoordinator.simpleCoordinator(),
                 SenderMapper.create(BukkitSender::create, Sender::getSender));
 
@@ -50,9 +50,7 @@ public class BukkitCommandManager implements CommandHandler {
             if (brigadier != null) {
                 brigadier.setNativeNumberSuggestions(false);
             }
-        }
-
-        if (getManager().hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+        } else if (getManager().hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             getManager().registerAsynchronousCompletions();
         }
 
@@ -64,7 +62,7 @@ public class BukkitCommandManager implements CommandHandler {
     }
 
     @Override
-    public @NotNull PaperCommandManager<@NotNull Sender> getManager() {
+    public @NotNull LegacyPaperCommandManager<@NotNull Sender> getManager() {
         return this.manager;
     }
 
