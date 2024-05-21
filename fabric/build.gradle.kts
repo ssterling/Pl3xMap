@@ -1,8 +1,5 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
-import net.fabricmc.loom.task.RemapJarTask
-import org.gradle.jvm.tasks.Jar
 
 plugins {
     id("fabric-loom") version("1.6-SNAPSHOT") // TODO: Temp
@@ -12,6 +9,10 @@ plugins {
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
 project.version = "${rootProject.properties["minecraftVersion"]}-$buildNum"
 project.group = "net.pl3x.map.fabric"
+
+base {
+    archivesName = "${rootProject.name}-${project.name}"
+}
 
 loom {
     mixin {
@@ -61,11 +62,21 @@ tasks {
         archiveClassifier = ""
     }
 
+    // needed for below jank
+    compileJava {
+        dependsOn(":core:jar")
+    }
+
     shadowJar {
         mergeServiceFiles()
 
         dependencies {
             include(project(":core"))
+        }
+
+        // this is janky, but it works
+        manifest {
+            from(project(":core").tasks.named<Jar>("shadowJar").get().manifest)
         }
     }
 

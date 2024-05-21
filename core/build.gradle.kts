@@ -1,16 +1,20 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("java")
     id("io.github.goooler.shadow") version "8.1.7" // TODO: Temp
+    id("net.kyori.indra.git") version "2.1.1" // TODO: Temp
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
+project.group = "net.pl3x.map.core"
 project.version = "${rootProject.properties["minecraftVersion"]}-$buildNum"
 
 java {
     withJavadocJar()
     withSourcesJar()
+}
+
+base {
+    archivesName = "${rootProject.name}-${project.name}"
 }
 
 repositories {
@@ -63,42 +67,47 @@ dependencies {
     compileOnly("com.google.guava:guava:${rootProject.properties["guavaVersion"]}")
 }
 
-tasks.withType<ShadowJar> {
-    archiveBaseName = "${rootProject.name}-${project.name}"
-    archiveClassifier = ""
+tasks {
+    shadowJar {
+        archiveClassifier = ""
 
-    mergeServiceFiles()
-    exclude(
-        "META-INF/LICENSE",
-        "META-INF/LICENSE.txt"
-    )
+        mergeServiceFiles()
+        exclude(
+            "META-INF/LICENSE",
+            "META-INF/LICENSE.txt"
+        )
 
-    arrayOf(
-        //"org.incendo", // do not relocate
-        "com.github.benmanes.caffeine.cache",
-        "com.github.Carleslc.Simple-YAML",
-        "com.google.errorprone.annotations",
-        "com.luciad",
-        //"io.leangen.geantyref", // do not relocate!
-        "io.undertow",
-        //"net.kyori", // do not relocate!
-        "net.querz",
-        "org.checkerframework",
-        "org.jboss",
-        "org.simpleyaml",
-        "org.wildfly",
-        "org.xnio",
-        "org.yaml.snakeyaml",
-    ).forEach { it -> relocate(it, "libs.$it") }
-}
+        arrayOf(
+            //"org.incendo", // do not relocate
+            "com.github.benmanes.caffeine.cache",
+            "com.github.Carleslc.Simple-YAML",
+            "com.google.errorprone.annotations",
+            "com.luciad",
+            //"io.leangen.geantyref", // do not relocate!
+            "io.undertow",
+            //"net.kyori", // do not relocate!
+            "net.querz",
+            "org.checkerframework",
+            "org.jboss",
+            "org.simpleyaml",
+            "org.wildfly",
+            "org.xnio",
+            "org.yaml.snakeyaml",
+        ).forEach { it -> relocate(it, "libs.$it") }
 
-tasks.named("build") {
-    dependsOn(tasks.withType<ShadowJar>())
-}
+        manifest {
+            attributes["Main-Class"] = "${project.group}.Pl3xMap"
+            attributes["Git-Commit"] = (if (indraGit.isPresent) indraGit.commit()?.name() ?: "" else "").substring(0, 7)
+        }
+    }
 
+    build {
+        dependsOn(shadowJar)
+    }
 
-tasks.withType<Javadoc> {
-    options.encoding = "UTF-8"
-    (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
-    title = "${rootProject.name}-${project.version} API"
+    javadoc {
+        options.encoding = "UTF-8"
+        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+        title = "${rootProject.name}-${project.version} API"
+    }
 }

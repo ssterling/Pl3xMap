@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("java")
     id("io.papermc.paperweight.userdev") version("1.7.1") // TODO: Temp
@@ -9,6 +7,10 @@ plugins {
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
 project.version = "${rootProject.properties["minecraftVersion"]}-$buildNum"
 project.group = "net.pl3x.map.bukkit"
+
+base {
+    archivesName = "${rootProject.name}-${project.name}"
+}
 
 repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots/") {
@@ -41,6 +43,20 @@ dependencies {
 tasks {
     reobfJar {
         dependsOn(shadowJar)
+    }
+
+    // needed for below jank
+    compileJava {
+        dependsOn(":core:jar")
+    }
+
+    shadowJar {
+        mergeServiceFiles()
+
+        // this is janky, but it works
+        manifest {
+            from(project(":core").tasks.named<Jar>("shadowJar").get().manifest)
+        }
     }
 
     build {

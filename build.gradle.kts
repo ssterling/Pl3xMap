@@ -1,11 +1,9 @@
 plugins {
     id("java-library")
     id("com.modrinth.minotaur") version "2.+" // TODO: Temp
-    id("net.kyori.indra.git") version "2.1.1" // TODO: Temp
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
-project.group = "net.pl3x.map"
 project.version = "${rootProject.properties["minecraftVersion"]}-$buildNum"
 
 tasks {
@@ -18,9 +16,10 @@ tasks {
 
         archiveClassifier = ""
 
+        // this is janky, but it works
         val manifestFiles = mutableSetOf<FileTree>();
         from(layout.files(subprojects.filter({ it.name != "webmap" && it.name != "core" }).map {
-            val regularFile = it.layout.buildDirectory.file("libs/${it.name}-${it.version}.jar").get()
+            val regularFile = it.layout.buildDirectory.file("libs/${project.name}-${it.name}-${it.version}.jar").get()
             val zipTree = zipTree(regularFile)
             manifestFiles.add(zipTree)
             zipTree
@@ -28,16 +27,11 @@ tasks {
             exclude("META-INF/MANIFEST.MF")
         }
 
+        // this is janky, but it works
         manifestFiles.forEach {
             it.matching { include("META-INF/MANIFEST.MF") }.files.forEach {
                 manifest.from(it)
             }
-        }
-
-        // TODO: move to core subproject
-        manifest {
-            attributes["Main-Class"] = "${project.group}.core.Pl3xMap"
-            attributes["Git-Commit"] = (if (indraGit.isPresent) indraGit.commit()?.name() ?: "" else "").substring(0, 7)
         }
     }
 }
