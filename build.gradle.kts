@@ -1,33 +1,44 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("java-library")
-    id("io.github.goooler.shadow") version "8.1.7" // TODO: Temp
     id("com.modrinth.minotaur") version "2.+" // TODO: Temp
+    id("net.kyori.indra.git") version "2.1.1" // TODO: Temp
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
+project.group = "net.pl3x.map"
 project.version = "${rootProject.properties["minecraftVersion"]}-$buildNum"
-
-dependencies {
-    implementation(project(":fabric", configuration = "shadow"))
-    implementation(project(":bukkit", configuration = "shadow"))
-}
 
 tasks {
     jar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
         subprojects {
             dependsOn(project.tasks.build)
         }
-    }
 
-    shadowJar {
         archiveClassifier = ""
-        mergeServiceFiles()
-    }
 
-    build {
-        dependsOn(shadowJar)
+        val manifestFiles = mutableSetOf<FileTree>();
+        from(layout.files(subprojects.filter({ it.name != "webmap" && it.name != "core" }).map {
+            val regularFile = it.layout.buildDirectory.file("libs/${it.name}-${it.version}.jar").get()
+            val zipTree = zipTree(regularFile)
+            manifestFiles.add(zipTree)
+            zipTree
+        })) {
+            exclude("META-INF/MANIFEST.MF")
+        }
+
+        manifestFiles.forEach {
+            it.matching { include("META-INF/MANIFEST.MF") }.files.forEach {
+                manifest.from(it)
+            }
+        }
+
+        // TODO: move to core subproject
+        manifest {
+            attributes["Main-Class"] = "${project.group}.core.Pl3xMap"
+            attributes["Git-Commit"] = (if (indraGit.isPresent) indraGit.commit()?.name() ?: "" else "").substring(0, 7)
+        }
     }
 }
 
