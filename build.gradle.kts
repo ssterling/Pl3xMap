@@ -53,7 +53,7 @@ modrinth {
     //        rootProject.layout.buildDirectory.file("libs/${rootProject.name}-${project.version}-javadoc.jar").get(),
     //        rootProject.layout.buildDirectory.file("libs/${rootProject.name}-${project.version}-sources.jar").get()
     //])
-    gameVersions.addAll(listOf("${libs.versions.minecraft.get()}"))
+    gameVersions.addAll(listOf(libs.versions.minecraft.get()))
     loaders.addAll(listOf("bukkit", "fabric", /*"forge",*/ "paper", "purpur", "quilt", "spigot", "folia"))
     changelog = System.getenv("COMMIT_MESSAGE")
     dependencies {
