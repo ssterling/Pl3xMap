@@ -1,7 +1,7 @@
 plugins {
     id("java")
-    id("io.papermc.paperweight.userdev") version("1.7.1") // TODO: Temp
-    id("io.github.goooler.shadow") version "8.1.7" // TODO: Temp
+    alias(libs.plugins.paperweight.userdev)
+    alias(libs.plugins.shadow)
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp

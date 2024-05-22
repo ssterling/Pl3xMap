@@ -1,7 +1,7 @@
 plugins {
     id("java")
-    id("io.github.goooler.shadow") version "8.1.7" // TODO: Temp
-    id("net.kyori.indra.git") version "2.1.1" // TODO: Temp
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.indra.git)
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp

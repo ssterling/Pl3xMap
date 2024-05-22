@@ -2,8 +2,8 @@ import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
 plugins {
-    id("fabric-loom") version("1.6-SNAPSHOT") // TODO: Temp
-    id("io.github.goooler.shadow") version "8.1.7" // TODO: Temp
+    alias(libs.plugins.fabric.loom)
+    alias(libs.plugins.shadow)
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp

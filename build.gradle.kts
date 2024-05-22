@@ -1,6 +1,6 @@
 plugins {
     id("java-library")
-    id("com.modrinth.minotaur") version "2.+" // TODO: Temp
+    alias(libs.plugins.minotaur)
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
