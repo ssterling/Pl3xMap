@@ -7,7 +7,7 @@ plugins {
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
-project.version = "${rootProject.properties["minecraftVersion"]}-$buildNum"
+project.version = "${libs.versions.minecraft.get()}-$buildNum"
 project.group = "net.pl3x.map.fabric"
 
 base {
@@ -42,16 +42,19 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${rootProject.properties["minecraftVersion"]}")
+    minecraft(libs.minecraft)
     mappings(loom.officialMojangMappings())
 
     implementation(project(path = ":core", configuration = "shadow"))
 
-    modImplementation("net.fabricmc:fabric-loader:${rootProject.properties["fabricLoaderVersion"]}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.properties["fabricApiVersion"]}")
+    modImplementation(libs.fabric.loader)
+    modImplementation(libs.fabric.api)
 
-    include(modImplementation("org.incendo:cloud-fabric:${rootProject.properties["cloudVersion"]}")!!)
-    include(modImplementation("net.kyori:adventure-platform-fabric:${rootProject.properties["adventureFabricVersion"]}")!!)
+    modImplementation(libs.cloudFabric)
+    include(libs.cloudFabric)
+
+    modImplementation(libs.adventurePlatformFabric)
+    include(libs.adventurePlatformFabric)
 }
 
 tasks {
@@ -91,9 +94,9 @@ tasks {
             "version" to project.version,
             "authors" to project.properties["authors"],
             "description" to rootProject.properties["description"],
-            "fabricApiVersion" to rootProject.properties["fabricApiVersion"],
-            "fabricLoaderVersion" to rootProject.properties["fabricLoaderVersion"],
-            "minecraftVersion" to rootProject.properties["minecraftVersion"],
+            "fabricApiVersion" to libs.versions.fabricApi.get(),
+            "fabricLoaderVersion" to libs.versions.fabricLoader.get(),
+            "minecraftVersion" to libs.versions.minecraft.get(),
             "website" to rootProject.properties["website"],
             "sources" to rootProject.properties["sources"],
             "issues" to rootProject.properties["issues"]

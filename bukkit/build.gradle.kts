@@ -5,7 +5,7 @@ plugins {
 }
 
 val buildNum = System.getenv("NEXT_BUILD_NUMBER") ?: "TEMP" // TODO: Temp
-project.version = "${rootProject.properties["minecraftVersion"]}-$buildNum"
+project.version = "${libs.versions.minecraft.get()}-$buildNum"
 project.group = "net.pl3x.map.bukkit"
 
 base {
@@ -32,12 +32,12 @@ repositories {
 dependencies {
     implementation(project(":core", configuration = "shadow"))
 
-    implementation("org.incendo:cloud-brigadier:${rootProject.properties["cloudVersion"]}")
-    implementation("org.incendo:cloud-paper:${rootProject.properties["cloudVersion"]}")
+    implementation(libs.cloudBrigadier)
+    implementation(libs.cloudPaper)
 
-    implementation("net.kyori:adventure-platform-bukkit:${rootProject.properties["adventureBukkitVersion"]}") // TODO: temp
+    implementation(libs.adventurePlatformBukkit)
 
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:${rootProject.properties["bukkitVersion"]}")
+    paperweight.paperDevBundle(libs.versions.bukkit)
 }
 
 tasks {

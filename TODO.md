@@ -1,4 +1,4 @@
-- [ ] move versions to `gradle/libs.versions.toml` 
+- [x] move versions to `gradle/libs.versions.toml` 
 - [ ] Share logic in [`buildSrc`](https://docs.gradle.org/current/userguide/sharing_build_logic_between_subprojects.html#sec:using_buildsrc)
 - uber-jar shenanigans
   - [x] fix missing `jars/` directory in `META-INF`
