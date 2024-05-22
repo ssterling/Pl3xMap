@@ -17,20 +17,25 @@ tasks {
         archiveClassifier = ""
 
         // this is janky, but it works
-        val manifestFiles = mutableSetOf<FileTree>();
-        from(layout.files(subprojects.filter({ it.name != "webmap" && it.name != "core" }).map {
-            val regularFile = it.layout.buildDirectory.file("libs/${project.name}-${it.name}-${it.version}.jar").get()
-            val zipTree = zipTree(regularFile)
-            manifestFiles.add(zipTree)
-            zipTree
-        })) {
+        val manifestFiles = subprojects.filter({ it.name != "webmap" && it.name != "core" }).map {
+            val regularFile = it.layout.buildDirectory.file("libs/${project.name}-${it.name}-${it.version}.jar")
+            if (regularFile.isPresent) {
+                zipTree(regularFile)
+            } else {
+                null
+            }
+        }.filterNotNull()
+
+        from(manifestFiles) {
             exclude("META-INF/MANIFEST.MF")
         }
 
         // this is janky, but it works
-        manifestFiles.forEach {
-            it.matching { include("META-INF/MANIFEST.MF") }.files.forEach {
-                manifest.from(it)
+        doFirst {
+            manifestFiles.forEach {
+                it.matching { include("META-INF/MANIFEST.MF") }.files.forEach {
+                    manifest.from(it)
+                }
             }
         }
     }
