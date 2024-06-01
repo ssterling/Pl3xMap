@@ -126,13 +126,20 @@ public class Region {
 
         byte compressionTypeByte = raf.readByte();
         CompressionType compressionType = CompressionType.getFromID(compressionTypeByte);
-        if (compressionTypeByte != 4 && compressionType == null) {
-            throw new IOException("Invalid compression type " + compressionTypeByte);
-        }
 
         FileInputStream fileInputStream = new FileInputStream(raf.getFD());
         // TODO: hotfix until querz' nbt library supports the LZ4 compression type
-        InputStream decompress = compressionTypeByte == 4 ? new LZ4BlockInputStream(fileInputStream) : compressionType.decompress(fileInputStream);
+        InputStream decompress;
+        if (compressionTypeByte == 3) {
+            decompress = fileInputStream;
+        } else if (compressionTypeByte == 4) {
+            decompress = new LZ4BlockInputStream(fileInputStream);
+        } else if (compressionType != null) {
+            decompress = compressionType.decompress(fileInputStream);
+        } else {
+            throw new IOException("Invalid compression type " + compressionTypeByte);
+        }
+        
         DataInputStream dis = new DataInputStream(new BufferedInputStream(decompress));
         NamedTag tag = new NBTInputStream(dis).readTag(Tag.DEFAULT_MAX_DEPTH);
         if (tag != null && tag.getTag() instanceof CompoundTag compoundTag) {
